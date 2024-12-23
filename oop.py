@@ -23,14 +23,17 @@ class Student:
         else:
             return 'Ошибка'
 
-    def best_student(self, student_1, student_2):
-        if isinstance(student_1, Student) and isinstance(student_2, Student):
-            if student_1.avg_grade() > student_2.avg_grade():
-                return f'{student_1.name} {student_1.surname}'
-            elif student_1.avg_grade() < student_2.avg_grade():
-                return f'{student_2.name} {student_2.surname}'
-            else:
-                return f'Средние оценки за лекции равны'
+    def __lt__(self, other): # маг. метод "<"
+        return self.avg_grade() < other.avg_grade()
+
+    def __le__(self, other): # маг. метод "<="
+        return self.avg_grade() <= other.avg_grade()
+
+    def __gt__(self, other): # маг. метод ">"
+        return self.avg_grade() > other.avg_grade()
+
+    def __ge__(self, other): # маг. метод ">="
+        return self.avg_grade() >= other.avg_grade()
 
     def avg_grade(self):
         result = []
@@ -38,6 +41,14 @@ class Student:
             result += grade_list
         return sum(result) / len(result)
 
+    def best_student(self, other):
+        if isinstance(other, Student):
+            if self > other:
+                return f'{self.name} {self.surname}'
+            elif self < other:
+                return f'{other.name} {other.surname}'
+            else:
+                return f'Средние оценки за лекции равны'
 
 
 class Mentor:
@@ -57,12 +68,24 @@ class Lecturer(Mentor):
                 f"фамилия: {self.surname}\n"
                 f"Средняя оценка за лекции: {self.avg_grade()}")
 
-    def best_lecturer(self, lecturer_1, lecturer_2):
-        if isinstance(lecturer_1, Lecturer) and isinstance(lecturer_2, Lecturer):
-            if lecturer_1.avg_grade() > lecturer_2.avg_grade():
-                return f'{lecturer_1.name} {lecturer_1.surname}'
-            elif lecturer_1.avg_grade() < lecturer_2.avg_grade():
-                return f'{lecturer_2.name} {lecturer_2.surname}'
+    def __lt__(self, other): # маг. метод "<"
+        return self.avg_grade() < other.avg_grade()
+
+    def __le__(self, other): # маг. метод "<="
+        return self.avg_grade() <= other.avg_grade()
+
+    def __gt__(self, other): # маг. метод ">"
+        return self.avg_grade() > other.avg_grade()
+
+    def __ge__(self, other): # маг. метод ">="
+        return self.avg_grade() >= other.avg_grade()
+
+    def best_lecturer(self, other):
+        if isinstance(other, Lecturer):
+            if self > other:
+                return f'{self.name} {self.surname}'
+            elif self < other:
+                return f'{other.name} {other.surname}'
             else:
                 return f'Средние оценки за лекции равны'
 
@@ -89,6 +112,7 @@ class Reviewer(Mentor):
     def __str__(self):
         return (f"имя: {self.name}\n"
                 f"фамилия: {self.surname}")
+
 
 student_1 = Student('Maxim', 'One', 'male')
 student_1.finished_courses = ['IB']
@@ -125,11 +149,11 @@ student_2.rate_lecturer(lecturer_2, 'PY', 7)
 print(f"Данные студентов\n"
       f"{student_1}\n\n"
       f"{student_2}\n\n"
-      f"Лучший студент: {student_1.best_student(student_1, student_2)}\n\n"
+      f"Лучший студент: {student_1.best_student(student_2)}\n\n"
       f"Данные лекторов\n"
       f"{lecturer_1}\n\n"
       f"{lecturer_2}\n\n"
-      f"Лучший лектор: {lecturer_1.best_lecturer(lecturer_1, lecturer_2)}\n\n"
+      f"Лучший лектор: {lecturer_1.best_lecturer(lecturer_2)}\n\n"
       f"Данные проверяющих\n"
       f"{reviewer_1}\n\n"
       f"{reviewer_2}")
@@ -138,7 +162,7 @@ print(f"Данные студентов\n"
 def all_student_avg(students, course):
     result = []
     for student in students:
-        if course in student.courses_in_progress:
+        if course in student.courses_in_progress and course in student.grades:
             result += student.grades[course]
     return sum(result) / len(result)
 
@@ -152,4 +176,3 @@ def all_lecturers_avg(lecturers, course):
     return sum(result) / len(result)
 
 print(f"средняя оценка за дз по всем лекторам в рамках курса {all_lecturers_avg([lecturer_1, lecturer_2], 'Git')}")
-
